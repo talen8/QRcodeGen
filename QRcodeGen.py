@@ -22,8 +22,6 @@ if not os.path.exists(SAVE_FOLDER):
 
 # 定义生成二维码函数
 def generate_qr_code():
-    """生成二维码"""
-    global img
     data = text_entry.get()
     if not data.strip():
         status_label.config(text="输入内容不能为空！")
@@ -41,6 +39,7 @@ def generate_qr_code():
     qr.make(fit=True)
     fill_color = fill_color_var.get()
     back_color = back_color_var.get()
+    global img
     img = qr.make_image(fill_color=fill_color, back_color=back_color)
     img = img.resize((PREVIEW_SIZE, PREVIEW_SIZE))
     img_preview = ImageTk.PhotoImage(img)
@@ -51,8 +50,6 @@ def generate_qr_code():
 
 # 定义保存二维码函数
 def save_qr_code():
-    """保存二维码"""
-    global img
     timestamp = int(time.time())
     filename = f"qrcode_{timestamp}.png"
     full_path = f"{SAVE_FOLDER}{filename}"
@@ -68,7 +65,6 @@ def save_qr_code():
 root = tk.Tk()
 root.title(WINDOW_TITLE)
 root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
-# 图标
 icon_url = WINDOW_ICON
 response = requests.get(icon_url)
 icon_data = response.content
@@ -108,12 +104,6 @@ def on_click(event):
 # 绑定鼠标点击事件
 root.bind("<1>", on_click)
 
-# 创建颜色选择变量
-fill_color_var = tk.StringVar()
-fill_color_var.set("black")
-back_color_var = tk.StringVar()
-back_color_var.set("white")
-
 # 创建操作按钮容器
 button_frame = tk.Frame(root)
 button_frame.pack(pady=(0, 10))
@@ -125,6 +115,12 @@ generate_button.pack(side=tk.LEFT, padx=10, pady=10)
 # 创建保存二维码按钮
 save_button = tk.Button(button_frame, text="保存", command=save_qr_code, state="disabled", font=("微软雅黑", 12), fg="#333", bg="#f0f0f0", bd=2, relief="ridge")
 save_button.pack(side=tk.LEFT, padx=10, pady=10)
+
+# 创建颜色选择变量
+fill_color_var = tk.StringVar()
+fill_color_var.set("black")
+back_color_var = tk.StringVar()
+back_color_var.set("white")
 
 # 创建设置按钮
 def open_setting_window():
@@ -138,7 +134,7 @@ def open_setting_window():
         """选择颜色"""
         color = colorchooser.askcolor()[1]
         color_var.set(color)
-        button.config(bg=color)  # 更新按钮颜色
+        button.config(bg=color)
         generate_qr_code()  # 生成新的二维码并更新预览
         setting_window.focus_force()
 
